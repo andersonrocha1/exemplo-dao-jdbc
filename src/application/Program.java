@@ -35,6 +35,12 @@ public class Program {
 			System.out.println(obj);
 		}
 		
+		
+		System.out.println("\n**** TEST 4: Seller Insert ****");	
+		
+		Seller newSeller = new Seller(null, "Otávio", "otavio@gmail.com", new Date(), 5200.0, department );
+		sellerDao.insert(newSeller);
+		System.out.println("Inserted! New Id = " + newSeller.getId());
 	}
 
 }

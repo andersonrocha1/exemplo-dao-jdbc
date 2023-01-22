@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import db.DB;
 import db.DbException;
@@ -13,72 +16,65 @@ import model.entities.Department;
 import model.entities.Seller;
 
 public class SellerDaoJDBC implements SellerDao {
-	
+
 	private Connection conn;
-	
-	
+
 	public SellerDaoJDBC(Connection conn) {
-		
+
 		this.conn = conn;
 	}
 
 	@Override
 	public void insert(Seller obj) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void update(Seller obj) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void deletById(Integer id) {
-		
-		
-		
+
 	}
 
 	@Override
 	public Seller findById(Integer id) {
-		
+
 		PreparedStatement st = null;
 		ResultSet rs = null;
-		
+
 		try {
-			
-			
-			st = conn.prepareStatement("SELECT seller.*,department.Name as DepName "
-					+ "FROM seller INNER JOIN department "
-					+ "ON seller.DepartmentId = department.Id "
-					+ "WHERE seller.Id = ?");
-			
+
+			st = conn.prepareStatement(
+					"SELECT seller.*,department.Name as DepName " + "FROM seller INNER JOIN department "
+							+ "ON seller.DepartmentId = department.Id " + "WHERE seller.Id = ?");
+
 			st.setInt(1, id);
 			rs = st.executeQuery();
-			
-			if(rs.next()) {
-				Department dep = instantiateDepartment(rs);			
-				Seller obj = instantiateSeller(rs, dep);				
-				return obj;				
+
+			if (rs.next()) {
+				Department dep = instantiateDepartment(rs);
+				Seller obj = instantiateSeller(rs, dep);
+				return obj;
 			}
 			return null;
-				
+
 		} catch (Exception e) {
 			throw new DbException(e.getMessage());
-		}
-		finally {
-			
+		} finally {
+
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
-					
+
 		}
 	}
 
-
 	private Seller instantiateSeller(ResultSet rs, Department dep) throws SQLException {
-		//Instanciando Seller para reusing
+		// Instanciando Seller para reusing
 		Seller obj = new Seller();
 		obj.setId(rs.getInt("Id"));
 		obj.setName(rs.getString("Name"));
@@ -90,7 +86,7 @@ public class SellerDaoJDBC implements SellerDao {
 	}
 
 	private Department instantiateDepartment(ResultSet rs) throws SQLException {
-		//Instanciando Department para reusing
+		// Instanciando Department para reusing
 		Department dep = new Department();
 		dep.setId(rs.getInt("DepartmentId"));
 		dep.setName(rs.getString("DepName"));
@@ -101,6 +97,53 @@ public class SellerDaoJDBC implements SellerDao {
 	public List<Seller> findAll() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<Seller> findByDepartment(Department department) {
+		//Listando por Department
+		PreparedStatement st = null;
+		ResultSet rs = null;
+
+		try {
+
+			st = conn.prepareStatement(
+					"SELECT seller.*,department.Name as DepName "
+					+ "FROM seller INNER JOIN department "
+					+ "ON seller.DepartmentId = department.Id "
+					+ "WHERE DepartmentId = ? "
+					+ "ORDER BY Name");
+
+			st.setInt(1, department.getId());
+			rs = st.executeQuery();
+			List<Seller> list = new ArrayList<>();
+			Map<Integer, Department> map = new HashMap<>();
+
+			while (rs.next()) {
+				
+				Department dep = map.get(rs.getInt("DepartmentId"));
+				if(dep == null) {
+					dep = instantiateDepartment(rs);
+					map.put(rs.getInt("DepartmentId"), dep);
+				}
+				
+			
+				Seller obj = instantiateSeller(rs, dep);
+				list.add(obj);
+				
+			}
+			return list;
+
+		} catch (Exception e) {
+			throw new DbException(e.getMessage());
+		} finally {
+
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+
+		}
+
+		
 	}
 
 }

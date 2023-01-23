@@ -20,7 +20,7 @@ public class Program2 {
 		System.out.println(department);
 		
 		
-		System.out.println("**** TEST 2: Department findAll****");
+		System.out.println("\n**** TEST 2: Department findAll****");
 		List<Department> list = departDao.findAll();
 		
 		 for(Department depart : list) {
@@ -32,6 +32,13 @@ public class Program2 {
 		 Department newDepartment = new Department(null, "Music");
 		 departDao.insert(newDepartment);
 		 System.out.println("Inserted! New Id = " + newDepartment.getId());
+		 
+		 
+		 System.out.println("\n**** TEST 3: Department Delete ****");
+		 System.out.println("Enter id for delete test: ");
+		 int id = sc.nextInt();
+		 departDao.deleteById(id);
+		 System.out.println("Delete Completed!!");
 		
 		 sc.close();
 	}

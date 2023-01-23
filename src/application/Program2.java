@@ -22,11 +22,18 @@ public class Program2 {
 		
 		System.out.println("**** TEST 2: Department findAll****");
 		List<Department> list = departDao.findAll();
+		
 		 for(Department depart : list) {
 			 System.out.println(depart);
 		 }
+		 
+		 
+		 System.out.println("\n**** TEST 3: Department Insert ****");
+		 Department newDepartment = new Department(null, "Music");
+		 departDao.insert(newDepartment);
+		 System.out.println("Inserted! New Id = " + newDepartment.getId());
 		
-
+		 sc.close();
 	}
 
 }

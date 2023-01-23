@@ -39,6 +39,13 @@ public class Program2 {
 		 int id = sc.nextInt();
 		 departDao.deleteById(id);
 		 System.out.println("Delete Completed!!");
+		 
+		 
+		 System.out.println("\n**** TEST 5: Department Update ****");
+		 department = departDao.findById(9);
+		 department.setName("Cultura");
+		 departDao.update(department);
+		 System.out.println("Update Completed!!");
 		
 		 sc.close();
 	}
